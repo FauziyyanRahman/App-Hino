@@ -15,7 +15,19 @@
 
 <?php $__env->startSection('body'); ?>
     <!--<body data-sidebar="dark" data-layout-mode="light">-->
-    <body data-sidebar="dark">
+    <body data-sidebar="light">
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner-chase">
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                </div>
+            </div>
+        </div>
 <?php echo $__env->yieldSection(); ?>
     <!-- Begin page -->
     <div id="layout-wrapper">

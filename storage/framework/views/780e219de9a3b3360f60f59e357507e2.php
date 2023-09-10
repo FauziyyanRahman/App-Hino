@@ -19,7 +19,7 @@
                             <h1 class="display-2 fw-medium">4<i class="bx bx-buoy bx-spin text-primary display-3"></i>4</h1>
                             <h4 class="text-uppercase">Sorry, page not found</h4>
                             <div class="mt-5 text-center">
-                                <a class="btn btn-primary waves-effect waves-light" href="index">Back to Dashboard</a>
+                                <a class="btn btn-primary waves-effect waves-light" href="/">Back to Dashboard</a>
                             </div>
                         </div>
                     </div>
@@ -36,4 +36,4 @@
 
     <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.master-without-nav', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Volumes/Secondary/PHP/Laravel/Apps/Hino/resources/views/errors/404.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.master-without-nav', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /Volumes/Secondary/PHP/Laravel/Apps/Apps-Hino/resources/views/errors/404.blade.php ENDPATH**/ ?>

@@ -1,38 +1,30 @@
-/*
-Template Name: Skote - Admin & Dashboard Template
-Author: Themesbrand
-Website: https://themesbrand.com/
-Contact: themesbrand@gmail.com
-File: contact user list Js File
-*/
-
-var url = "build/json/";
 var userListData = '';
 var editList = false;
-
-//contact user list by json
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+// Function to get JSON data from a URL
 var getJSON = function (jsonurl, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url + jsonurl, true);
-    xhr.responseType = "json";
-    xhr.onload = function () {
-        var status = xhr.status;
-        if (status === 200) {
-            callback(null, xhr.response);
-        } else {
-            callback(status, xhr.response);
-        }
-    };
-    xhr.send();
+    fetch(jsonurl)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            callback(null, data);
+        })
+        .catch(function(error) {
+            callback(error, null);
+        });
 };
 
-// get json
-getJSON("contact-user-list.json", function (err, data) {
+// Get JSON data from the Laravel route
+getJSON("/yajra-users", function (err, data) {
     if (err !== null) {
         console.log("Something went wrong: " + err);
     } else {
-        userListData = data;
-        loadUserList(userListData)
+        userListData = data.data;
+        loadUserList(userListData);
     }
 });
 
@@ -52,59 +44,76 @@ function loadUserList(datas) {
             {
                 data: null,
                 render: function (data, type, full) {
-                    var isUserProfile = full.memberImg ? '<img src="' + full.memberImg + '" alt="" class="member-img img-fluid d-block rounded-circle" />'
-                        : '<div class="avatar-title rounded-circle text-uppercase">' + full.nickname + '</div>';
-                    return '<div class="d-none">'+full.id+'</div><div class="avatar-xs img-fluid rounded-circle">' + isUserProfile + '</div';
-                }
-
+                    var firstChar = data.ms_user_name.charAt(0)
+                    var isUserProfile = '<div class="avatar-title rounded-circle text-uppercase">' + firstChar + '</div>';
+                    return '<div class="d-none">'+full.ms_user_id+'</div><div class="avatar-xs img-fluid rounded-circle">' + isUserProfile + '</div';
+                },
             }, 
             {
                 data: null,
                 render: function (data, type, full) {
+                    var str = full.ms_user_name;
+                    var newStr = str.charAt(0).toUpperCase() + str.slice(1);
+
+                    var str = full.ms_user_email;
+                    var newStr2 = str.charAt(0).toUpperCase() + str.slice(1);
                     return '<div>\
-                    <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">'+ full.userName + '</a></h5>\
-                    <p class="text-muted mb-0">'+ full.designation + '</p>\
+                    <h5 class="text-truncate font-size-14 mb-1"><a href="javascript: void(0);" class="text-dark">'+ newStr + '</a></h5>\
+                    <p class="text-muted mb-0" style="font-size: 11px;">'+ newStr2 + '</p>\
                     </div>';
                 },
             },
-            { data: "email" },
             {
-                data: "tags",
-                render: function (data, type, full) {
-                    var tags = full.tags;
-                    var tagHtml = '';
-                    var tabShowSize = 2;
-                    Array.from(tags.slice(0, tabShowSize)).forEach(function (tag, index) {
-                        tagHtml += '<a href="javascript: void(0);" class="badge badge-soft-primary font-size-11 m-1">' + tag + '</a>';
-                    });
-                    if(tags.length > tabShowSize){
-                        var tabsLength = tags.length - tabShowSize;
-                        tagHtml += '<a href="javascript: void(0);" class="badge badge-soft-primary font-size-11 m-1">'+tabsLength+' more</a>';
-                    }
-                    
-                    return tagHtml;
-                },
+                data: "ms_role_name",
+                render: function (data) {
+                    return '\
+                    <a href="javascript: void(0);" class="badge badge-soft-primary font-size-11 m-1">' + data.charAt(0).toUpperCase() + data.slice(1) +'\
+                    </a>';
+                }
             },
-            {data: "projects"},
+            {
+                data: "ms_karoseri_name",
+                render: function (data) {
+                    if (data !== null) {
+                        return '<p class="text-success mb-0">' + data.charAt(0).toUpperCase() + data.slice(1) + '</p>';
+                    } else {
+                        return '<p class="text-danger mb-0">Karoseri name not found</p>';
+                    }
+                }
+            },
+            {
+                data: "update_id",
+                render: function (data) {
+                    if (data !== null) {
+                        return data.charAt(0).toUpperCase() + data.slice(1);
+                    } else {
+                        return '';
+                    }
+                }
+            },
+            {
+                data: "update_date",
+                render: function (data) {
+                    if (data === null) {
+                        return '';
+                    }
+
+                    return data;
+                }
+            },
             {
                 data: null,
                 'bSortable': false,
                 render: function (data, type, full) {
                     return '<ul class="list-inline font-size-20 contact-links mb-0">\
                     <li class="list-inline-item">\
-                        <a href="javascript: void(0);" class="px-2"><i class="bx bx-message-square-dots"></i></a>\
-                    </li>\
-                    <li class="list-inline-item">\
-                        <a href="javascript: void(0);" class="px-2"><i class="bx bx-user-circle"></i></a>\
-                    </li>\
-                    <li class="list-inline-item">\
                     <div class="dropdown">\
                         <a href="javascript: void(0);" class="dropdown-toggle card-drop px-2" data-bs-toggle="dropdown" aria-expanded="false">\
                             <i class="mdi mdi-dots-horizontal font-size-18"></i>\
                         </a>\
                         <ul class="dropdown-menu dropdown-menu-end">\
-                            <li><a href="#newContactModal" data-bs-toggle="modal" class="dropdown-item edit-list" data-edit-id="'+ full.id + '"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>\
-                            <li><a href="#removeItemModal" data-bs-toggle="modal" class="dropdown-item remove-list" data-remove-id="'+ full.id + '"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>\
+                            <li><a href="#newContactModal" data-bs-toggle="modal" class="dropdown-item edit-list" data-edit-id="'+ full.ms_user_id + '"><i class="mdi mdi-pencil font-size-16 text-success me-1"></i> Edit</a></li>\
+                            <li><a href="#removeItemModal" data-bs-toggle="modal" class="dropdown-item remove-list" data-remove-id="'+ full.ms_user_id + '"><i class="mdi mdi-trash-can font-size-16 text-danger me-1"></i> Delete</a></li>\
                         </ul>\
                     </div>\
                     </li>\
@@ -126,10 +135,26 @@ function loadUserList(datas) {
     $(".dataTables_filter").hide();
 }
 
-// Select2
-$("#roles-input").select2();
+Array.from(document.querySelectorAll(".addContact-modal")).forEach(function(elem) {
+    elem.addEventListener('click', function (event) {
+        editList = false;
+        document.getElementById("createContact-form").classList.remove("was-validated");
+        document.getElementById("newContactModalLabel").innerHTML = "Add Users";
+        document.getElementById("addContact-btn").innerHTML = "Add";
+        document.getElementById("userid-input").value = "";
+        document.getElementById("username-input").value = "";
+        document.getElementById("username-input").readOnly = false;
+        document.getElementById("password-label").style.display = "block";
+        document.getElementById("password-input").style.display = "block";
+        document.getElementById("password-input").setAttribute("required", "");
+        document.getElementById("password-input").value = "";
+        document.getElementById("email-input").value = "";
+        document.getElementById("member-img").src = "build/images/user-dummy-img.jpg";
 
-// create user modal form
+        $('#roles-select').val("").trigger('change');
+    });
+});
+
 var createContactForms = document.querySelectorAll('.createContact-form')
 Array.prototype.slice.call(createContactForms).forEach(function (form) {
     form.addEventListener('submit', function (event) {
@@ -138,63 +163,90 @@ Array.prototype.slice.call(createContactForms).forEach(function (form) {
             event.stopPropagation();
         } else {
             event.preventDefault();
-            var memberImg = document.getElementById("member-img").src;
-            var memberImgValue = memberImg.substring(
-                memberImg.indexOf("/as") + 1
-            );
-
-            var memberImageValue
-            if (memberImgValue == "build/images/user-dummy-img.jpg") {
-                memberImageValue = ""
-            } else {
-                memberImageValue = memberImg
-            }
 
             var userName = document.getElementById('username-input').value;
-            var str = userName;
-            var matches = str.match(/\b(\w)/g);
-            var acronym = matches.join(''); // JSON
-            var nicknameValue = acronym.substring(0, 2)
-
-            var designationInput = document.getElementById('designation-input').value;
+            var password = document.getElementById('password-input').value;
             var emailInput = document.getElementById('email-input').value;
-            var rolesInputFieldValue = $("#roles-input").val();
+            var rolesInputFieldValue = $("#roles-select").val();
 
-            if (userName !== "" && designationInput !== "" && emailInput !== "" && !editList) {
-                var newUserId = findNextId();
-                
+            if (userName !== "" && emailInput !== "" && !editList) {
                 var newList = {
-                    "id": newUserId,
-                    "memberImg": memberImageValue,
-                    "nickname": nicknameValue,
-                    "userName": userName,
-                    "designation": designationInput,
-                    "email": emailInput,
-                    "roles": rolesInputFieldValue,
-                    "projects": "--"
+                    "ms_user_name": userName,
+                    "ms_user_password": password,
+                    "ms_user_email": emailInput,
+                    "ms_role_name": rolesInputFieldValue
                 };
 
-                userListData.push(newList)
-            }else if(userName !== "" && designationInput !== "" && emailInput !== "" && editList){
+                fetch('/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify(newList)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'User has been created.',
+                            icon: 'success',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            allowEnterKey: false,
+                            stopKeydownPropagation: false,
+                            showConfirmButton: true
+                        }).then(function (result) {
+                            if (result.value) {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        throw new Error('Something went wrong');
+                    }
+                })
+                .catch(error => {
+                    console.error('Edit request failed:', error);
+                });
+            }else if(userName !== "" && emailInput !== "" && editList){
                 var getEditid = 0;
                 getEditid = document.getElementById("userid-input").value;
-                userListData = userListData.map(function (item) {
-                    if (item.id == getEditid) {
-                        var editObj = {
-                            'id': getEditid,
-                            "memberImg": memberImageValue,
-                            "nickname": nicknameValue,
-                            "userName": userName,
-                            "designation": designationInput,
-                            "email": emailInput,
-                            'roles': rolesInputFieldValue,
-                            "projects": item.projects
-                        }
-                        
-                        return editObj;
+                var editObj = {
+                    "ms_user_name": userName,
+                    "ms_user_email": emailInput,
+                    "ms_role_name": rolesInputFieldValue,                    
+                };
+
+                fetch('/users/' + getEditid, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify(editObj)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'User has been updated.',
+                            icon: 'success',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            allowEnterKey: false,
+                            stopKeydownPropagation: false,
+                            showConfirmButton: true
+                        }).then(function (result) {
+                            if (result.value) {
+                                if ($.fn.DataTable.isDataTable('#userList-table')) {
+                                    $('#userList-table').DataTable().destroy();
+                                };
+                                $("#newContactModal").modal("hide");
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        throw new Error('Something went wrong');
                     }
-                    return item;
+                })
+                .catch(error => {
+                    console.error('Edit request failed:', error);
                 });
+
                 editList = false;
             }
 
@@ -208,102 +260,69 @@ Array.prototype.slice.call(createContactForms).forEach(function (form) {
     }, false)
 });
 
-
-function fetchIdFromObj(member) {
-    return parseInt(member.id);
-}
-
-function findNextId() {
-    if (userListData.length === 0) {
-        return 0;
-    }
-    var lastElementId = fetchIdFromObj(userListData[userListData.length - 1]),
-        firstElementId = fetchIdFromObj(userListData[0]);
-    return (firstElementId >= lastElementId) ? (firstElementId + 1) : (lastElementId + 1);
-}
-
-// member image
-document.querySelector("#member-image-input").addEventListener("change", function () {
-    var preview = document.querySelector("#member-img");
-    var file = document.querySelector("#member-image-input").files[0];
-    var reader = new FileReader();
-    reader.addEventListener("load",function () {
-        preview.src = reader.result;
-    },false);
-    if (file) {
-        reader.readAsDataURL(file);
-    }
-});
-
-
 // edit list event
 function editContactList() {
-    var getEditid = 0;
-    Array.from(document.querySelectorAll(".edit-list")).forEach(function (elem) {
-        elem.addEventListener('click', function (event) {
-            getEditid = elem.getAttribute('data-edit-id');
-            editList = true;
-            document.getElementById("createContact-form").classList.remove("was-validated")
-            userListData = userListData.map(function (item) {
-                if (item.id == getEditid) {
-                    document.getElementById("newContactModalLabel").innerHTML = "Edit Profile";
-                    document.getElementById("addContact-btn").innerHTML = "Update";
-                    document.getElementById("userid-input").value = item.id;
-                    if(item.memberImg == ""){
-                        document.getElementById("member-img").src = "build/images/user-dummy-img.jpg";
-                    }else{
-                        document.getElementById("member-img").src = item.memberImg;
-                    }
-                    document.getElementById("username-input").value = item.userName;
-                    document.getElementById("designation-input").value = item.designation;
-                    document.getElementById("email-input").value = item.email;
+    $('#userList-table').on('click', '.edit-list', function () {
+        var userId = $(this).data('edit-id');
+        editList = true;
+        userListData = userListData.map(function (item) {
+            if (item.ms_user_id == userId) {            
+                document.getElementById("newContactModalLabel").innerHTML = "Edit Users";
+                document.getElementById("addContact-btn").innerHTML = "Update";
+                document.getElementById("userid-input").value = item.ms_user_id;
+                document.getElementById("member-img").src = "build/images/user-dummy-img.jpg";
+                document.getElementById("username-input").value = item.ms_user_name;
+                document.getElementById("username-input").readOnly = true;
+                document.getElementById("password-input").removeAttribute("required");
+                document.getElementById("password-input").style.display = "none";
+                document.getElementById("password-label").style.display = "none";
+                document.getElementById("email-input").value = item.ms_user_email;
 
-                    $('#roles-input').val(item.tags).trigger('change');
-                }
-                return item;
-            });
+                $('#roles-select').val(item.ms_role_name).trigger('change');
+            }
+            return item; // Return the item as is
         });
     });
 }
 
-
-// add list event
-Array.from(document.querySelectorAll(".addContact-modal")).forEach(function(elem) {
-    elem.addEventListener('click', function (event) {
-        editList = false;
-        document.getElementById("createContact-form").classList.remove("was-validated");
-        document.getElementById("newContactModalLabel").innerHTML = "Add Contact";
-        document.getElementById("addContact-btn").innerHTML = "add";
-        document.getElementById("userid-input").value = "";
-        document.getElementById("username-input").value = "";
-        document.getElementById("email-input").value = "";
-        document.getElementById("designation-input").value = "";
-        document.getElementById("member-img").src = "build/images/user-dummy-img.jpg";
-
-        $('#roles-input').val("").trigger('change');
-    });
-});
-
-// remove item
 function removeItem() {
-    var getid = 0;
-    Array.from(document.querySelectorAll(".remove-list")).forEach(function (item) {
-        item.addEventListener('click', function (event) {
-            getid = item.getAttribute('data-remove-id');
-            document.getElementById("remove-item").addEventListener("click", function () {
-                function arrayRemove(arr, value) {
-                    return arr.filter(function (ele) {
-                        return ele.id != value;
+    $('#userList-table').on('click', '.remove-list', function () {
+        var userId = $(this).data('remove-id');
+        $('#remove-item').on('click', function () {
+            userListData = userListData.filter(function (item) {
+                if(item.ms_user_id === userId) {
+                    fetch('/users/' + item.ms_user_id, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'User has been deleted.',
+                                icon: 'success',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                allowEnterKey: false,
+                                stopKeydownPropagation: false,
+                                showConfirmButton: true
+                            }).then(function (result) {
+                                if (result.value) {
+                                    if ($.fn.DataTable.isDataTable('#userList-table')) {
+                                        $('#userList-table').DataTable().destroy();
+                                    };
+                                    $("#removeItemModal").modal("hide");
+                                    location.reload();
+                                }
+                            });
+                        } else {
+                            throw new Error('Something went wrong');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Edit request failed:', error);
                     });
                 }
-                var filtered = arrayRemove(userListData, getid);
-
-                userListData = filtered;
-                if ( $.fn.DataTable.isDataTable('#userList-table') ) {
-                    $('#userList-table').DataTable().destroy();
-                }
-                loadUserList(userListData);
-                $("#removeItemModal").modal("hide");
             });
         });
     });

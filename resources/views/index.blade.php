@@ -73,7 +73,7 @@
             <div class="card-body ">
                 <div class="d-flex">
                     <div class="flex-grow-1">
-                        <p class="text-white fw-medium">Total Request Category</p>
+                        <p class="text-white fw-medium">Total Request</p>
                         <h4 class="mb-0 text-white">{{ $response['data']['request'][0]['request'] }}</h4>
                     </div>
 

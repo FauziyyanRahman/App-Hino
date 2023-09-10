@@ -14,37 +14,43 @@
 </head>
 
 <?php $__env->startSection('body'); ?>
-    <!--<body data-sidebar="dark" data-layout-mode="light">-->
-    <body data-sidebar="dark">
+    <body data-topbar="light" data-layout="horizontal">
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner-chase">
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                </div>
+            </div>
+        </div>
 <?php echo $__env->yieldSection(); ?>
     <!-- Begin page -->
     <div id="layout-wrapper">
-        <?php echo $__env->make('layouts.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-        <?php echo $__env->make('layouts.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('layouts.horizontal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         <!-- ============================================================== -->
         <!-- Start right Content here -->
         <!-- ============================================================== -->
         <div class="main-content">
-            <div class="page-content">
-                <div class="container-fluid">
+            <div class="page-content pt-4">
+                <!-- Start content -->
+                <div class="container">
                     <?php echo $__env->yieldContent('content'); ?>
-                </div>
-                <!-- container-fluid -->
+                </div> <!-- content -->
             </div>
-            <!-- End Page-content -->
             <?php echo $__env->make('layouts.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
-        <!-- end main content-->
+        <!-- ============================================================== -->
+        <!-- End Right content here -->
+        <!-- ============================================================== -->
     </div>
-    <!-- END layout-wrapper -->
+    <!-- END wrapper -->
 
-    <!-- Right Sidebar -->
-    
-    <!-- /Right-bar -->
-
-    <!-- JAVASCRIPT -->
     <?php echo $__env->make('layouts.vendor-scripts', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 </body>
 
 </html>
-<?php /**PATH /Volumes/Secondary/PHP/Laravel/Apps/Hino/resources/views/layouts/master.blade.php ENDPATH**/ ?>
+<?php /**PATH /Volumes/Secondary/PHP/Laravel/Apps/Apps-Hino/resources/views/layouts/master-layouts.blade.php ENDPATH**/ ?>

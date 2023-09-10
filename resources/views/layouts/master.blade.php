@@ -15,7 +15,19 @@
 
 @section('body')
     <!--<body data-sidebar="dark" data-layout-mode="light">-->
-    <body data-sidebar="dark">
+    <body data-sidebar="light">
+        <div id="preloader">
+            <div id="status">
+                <div class="spinner-chase">
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                </div>
+            </div>
+        </div>
 @show
     <!-- Begin page -->
     <div id="layout-wrapper">

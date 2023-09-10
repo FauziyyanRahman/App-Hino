@@ -4,15 +4,9 @@
     @lang('translation.User_List')
 @endsection
 @section('css')
-    <!-- select2 css -->
-    <link href="{{ URL::asset('build/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-
-    <!-- DataTables -->
     <link href="{{ URL::asset('build/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
-
-    <!-- Responsive datatable examples -->
-    <link href="{{ URL::asset('build/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet"
-        type="text/css" />
+    <link href="{{ URL::asset('build/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ URL::asset('build/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 @section('content')
     @component('components.breadcrumb')
@@ -53,9 +47,10 @@
                                 <tr>
                                     <th scope="col" style="width: 40px;">#</th>
                                     <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Tags</th>
-                                    <th scope="col">Projects</th>
+                                    <th scope="col">Roles</th>
+                                    <th scope="col">Karoseri Name</th>
+                                    <th scope="col">Updated By</th>
+                                    <th scope="col">Updated At</th>
                                     <th scope="col" style="width: 200px;">Action</th>
                                 </tr>
                             </thead>
@@ -67,7 +62,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal -->
     <div class="modal fade" id="newContactModal" tabindex="-1" aria-labelledby="newContactModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -85,7 +79,7 @@
                                     <div class="position-relative d-inline-block">
                                         <div class="position-absolute bottom-0 end-0">
                                             <label for="member-image-input" class="mb-0" data-bs-toggle="tooltip"
-                                                data-bs-placement="right" title="Select Member Image">
+                                                data-bs-placement="right">
                                                 <div class="avatar-xs">
                                                     <div
                                                         class="avatar-title bg-light border rounded-circle text-muted cursor-pointer">
@@ -93,8 +87,8 @@
                                                     </div>
                                                 </div>
                                             </label>
-                                            <input class="form-control d-none" value="" id="member-image-input"
-                                                type="file" accept="image/png, image/gif, image/jpeg">
+                                            <!--<input class="form-control d-none" value="" id="member-image-input"
+                                                type="file" accept="image/png, image/gif, image/jpeg">-->
                                         </div>
                                         <div class="avatar-lg">
                                             <div class="avatar-title bg-light rounded-circle">
@@ -105,30 +99,28 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="username-input" class="form-label">User Name</label>
-                                    <input type="text" id="username-input" class="form-control" placeholder="Enter name"
-                                        required />
-                                    <div class="invalid-feedback">Please enter a name.</div>
+                                    <label for="username-input" class="form-label">Username</label>
+                                    <input type="text" id="username-input" class="form-control" placeholder="Enter username" required />
+                                    <div class="invalid-feedback">Please enter a username.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="designation-input" class="form-label">Designation</label>
-                                    <input type="text" id="designation-input" class="form-control"
-                                        placeholder="Enter Designation" required />
-                                    <div class="invalid-feedback">Please enter a designation.</div>
+                                    <label id="password-label" for="password-input" class="form-label">Password</label>
+                                    <input type="password" id="password-input" class="form-control" placeholder="Enter password" />
+                                    <div class="invalid-feedback">Please enter a password.</div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="email-input" class="form-label">Email</label>
-                                    <input type="email" id="email-input" class="form-control"
-                                        placeholder="Enter email" required />
+                                    <input type="email" id="email-input" class="form-control" placeholder="Enter email" required />
                                     <div class="invalid-feedback">Please enter email.</div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="roles-input" class="form-label">Roles</label>
-                                    <select class="select2 form-control" id="roles-input" data-placeholder="Choose ...">
-                                        <option value="HMSI">HMSI</option>
-                                        <option value="Dealer">Dealer</option>
-                                        <option value="Karoseri">Karoseri</option>
+                                    <label for="roles-select" class="form-label">Roles</label>
+                                    <select class="form-control" id="roles-select" required>
+                                        <option value="hmsi">HMSI</option>
+                                        <option value="dealer">Dealer</option>
+                                        <option value="karoseri">Karoseri</option>
                                     </select>
+                                    <div class="invalid-feedback">Please select roles.</div>
                                 </div>
                             </div>
 
@@ -136,8 +128,7 @@
                                 <div class="text-end">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">Cancel</button>
-                                    <button type="submit" id="addContact-btn" class="btn btn-success">Add
-                                        Customer</button>
+                                    <button type="submit" id="addContact-btn" class="btn btn-success">Add Customer</button>
                                 </div>
                             </div>
                         </div>
@@ -150,7 +141,6 @@
         <!-- end modal-dialog -->
     </div>
     <!-- end newContactModal -->
-
     <!-- removeItemModal -->
     <div class="modal fade" id="removeItemModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -163,10 +153,10 @@
                             <i class="mdi mdi-trash-can-outline"></i>
                         </div>
                     </div>
-                    <p class="text-muted font-size-16 mb-4">Are you Sure You want to Remove this User ?</p>
+                    <p class="text-muted font-size-14 mb-4">Are you sure remove this user ?</p>
 
                     <div class="hstack gap-2 justify-content-center mb-0">
-                        <button type="button" class="btn btn-danger" id="remove-item">Remove Now</button>
+                        <button type="button" class="btn btn-danger" id="remove-item">Remove</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -176,17 +166,11 @@
     <!-- end removeItemModal -->
 @endsection
 @section('script')
-    <!-- select2 js -->
-    <script src="{{ URL::asset('build/libs/select2/js/select2.min.js') }}"></script>
-
-    <!-- Required datatable js -->
     <script src="{{ URL::asset('build/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('build/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-
-    <!-- Responsive examples -->
     <script src="{{ URL::asset('build/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ URL::asset('build/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
-
+    <script src="{{ URL::asset('build/libs/sweetalert2/sweetalert2.min.js') }}"></script>
     <!-- ecommerce-customer-list init -->
     <script src="{{ URL::asset('build/js/pages/contact-user-list.init.js') }}"></script>
 @endsection
